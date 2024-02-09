@@ -1,15 +1,16 @@
 import 'package:crud_app_dio/controllers/user_controller.dart';
+import 'package:crud_app_dio/views/create_user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class UserListView extends StatefulWidget {
+  const UserListView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<UserListView> createState() => _UserListViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _UserListViewState extends State<UserListView> {
   @override
   void initState() {
     Provider.of<UserController>(context, listen: false).fetchUsers();
@@ -41,9 +42,11 @@ class _HomeViewState extends State<HomeView> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          controller.fetchUsers();
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => CreateUserView(),
+          ));
         },
-        child: const Icon(Icons.refresh),
+        child: const Icon(Icons.add),
       ),
     );
   }

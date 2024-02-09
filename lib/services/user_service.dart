@@ -26,4 +26,15 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<void> createUser({required Users user}) async {
+    try {
+      final jsonData = user.toJson();
+
+      await dio.post(apiUrl, data: jsonData);
+    } catch (e) {
+      log("Error : $e");
+      rethrow;
+    }
+  }
 }
