@@ -38,4 +38,46 @@ class UserController extends ChangeNotifier {
       log('$e');
     }
   }
+
+  Future<bool> deleteUser(String userId) async {
+    try {
+      loading = true;
+      notifyListeners();
+
+      bool deleted = await userService.deleteUser(userId);
+      if (deleted) {
+        await fetchUsers();
+      }
+
+      loading = false;
+      notifyListeners();
+      return deleted;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+      log('$e');
+      return false;
+    }
+  }
+
+  Future<bool> editUser({required Users user}) async {
+    try {
+      loading = true;
+      notifyListeners();
+
+      bool edited = await userService.editUser(user: user);
+      if (edited) {
+        await fetchUsers();
+      }
+
+      loading = false;
+      notifyListeners();
+      return edited;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+      log('$e');
+      return false;
+    }
+  }
 }

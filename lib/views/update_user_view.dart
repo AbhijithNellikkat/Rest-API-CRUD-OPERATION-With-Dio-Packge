@@ -1,20 +1,42 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:crud_app_dio/controllers/user_controller.dart';
 import 'package:crud_app_dio/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CreateUserView extends StatelessWidget {
-  CreateUserView({super.key});
+class UpdateUserView extends StatefulWidget {
+  final Users user;
+  const UpdateUserView({
+    super.key,
+    required this.user,
+  });
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
+  @override
+  State<UpdateUserView> createState() => _UpdateUserViewState();
+}
+
+class _UpdateUserViewState extends State<UpdateUserView> {
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneNumberController;
+
+  @override
+  void initState() {
+    nameController = TextEditingController(text: widget.user.name);
+    emailController = TextEditingController(text: widget.user.email);
+    phoneNumberController =
+        TextEditingController(text: widget.user.phoneNumber);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<UserController>(context);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Edit User'),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -75,16 +97,26 @@ class CreateUserView extends StatelessWidget {
                   const SizedBox(height: 1),
                   ElevatedButton(
                     onPressed: () async {
-                      final newUser = Users(
+                      Users updatedUser = Users(
+                        id: widget.user.id,
                         name: nameController.text,
                         email: emailController.text,
                         phoneNumber: phoneNumberController.text,
                       );
-                      controller.createUser(user: newUser);
-                      nameController.clear();
-                      emailController.clear();
-                      phoneNumberController.clear();
-                      Navigator.of(context).pop();
+
+                      bool edited = await Provider.of<UserController>(context,
+                              listen: false)
+                          .editUser(user: updatedUser);
+
+                      if (edited) {
+                        Navigator.of(context).pop();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to edit user'),
+                          ),
+                        );
+                      }
                     },
                     child: const Text(" Submit "),
                   ),
